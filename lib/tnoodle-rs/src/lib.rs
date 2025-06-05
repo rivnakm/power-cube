@@ -1,2 +1,2 @@
-mod jvm;
+pub mod jvm;
 pub mod puzzle;

@@ -4,14 +4,13 @@ pub enum PuzzleType {
     Three,
 }
 
-pub struct PuzzleRegistry {
+pub struct Puzzle {
     jvm: Jvm,
     registry: Instance,
 }
 
-impl PuzzleRegistry {
-    pub fn new(puzzle_type: PuzzleType) -> Result<PuzzleRegistry, J4RsError> {
-        let jvm = crate::jvm::get_jvm()?;
+impl Puzzle {
+    pub fn new(jvm: Jvm, puzzle_type: PuzzleType) -> Result<Puzzle, J4RsError> {
         let registry_enum =
             jvm.static_class("org.worldcubeassociation.tnoodle.scrambles.PuzzleRegistry")?;
         let enum_field = match puzzle_type {
@@ -19,7 +18,7 @@ impl PuzzleRegistry {
         };
         let registry = jvm.field(&registry_enum, enum_field)?;
 
-        Ok(PuzzleRegistry { jvm, registry })
+        Ok(Puzzle { jvm, registry })
     }
 
     pub fn generate_wca_scramble(&self) -> Result<String, J4RsError> {
@@ -43,22 +42,24 @@ impl PuzzleRegistry {
     }
 }
 
-pub struct Puzzle {}
-
 #[cfg(test)]
 mod tests {
+    use crate::jvm::get_jvm;
+
     use super::*;
 
     #[test]
-    fn test_puzzle_registry_new() {
-        let registry = PuzzleRegistry::new(PuzzleType::Three);
+    fn test_puzzle_new() {
+        let jvm = get_jvm(None).unwrap();
+        let registry = Puzzle::new(jvm, PuzzleType::Three);
 
         assert!(registry.is_ok());
     }
 
     #[test]
     fn test_generate_wca_scramble() {
-        let registry = PuzzleRegistry::new(PuzzleType::Three).unwrap();
+        let jvm = get_jvm(None).unwrap();
+        let registry = Puzzle::new(jvm, PuzzleType::Three).unwrap();
         let scramble = registry
             .generate_wca_scramble()
             .expect("failed to generate scramble");
