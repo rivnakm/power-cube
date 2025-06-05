@@ -1,0 +1,10 @@
+{
+    "artifacts": [
+        "org.worldcubeassociation.tnoodle:lib-scrambles:0.19.2",
+        "org.worldcubeassociation.tnoodle:lib-svglite:0.19.2",
+        "org.worldcubeassociation.tnoodle:scrambler-min2phase:0.19.2",
+        "org.worldcubeassociation.tnoodle:scrambler-threephase:0.19.2",
+        "org.worldcubeassociation.tnoodle:scrambler-sq12phase:0.19.2",
+        "org.timepedia.exporter:gwtexporter:2.5.1"
+    ]
+}
