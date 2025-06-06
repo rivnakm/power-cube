@@ -1,28 +1,24 @@
+use std::sync::Mutex;
+
 #[cfg(target_os = "linux")]
 use gtk::prelude::GtkWindowExt;
 
-use tauri::{path::BaseDirectory, Manager};
-use tnoodle_rs::{
-    jvm,
-    puzzle::{Puzzle, PuzzleType},
-};
+use scramble::BufferedScrambler;
+use tauri::{path::BaseDirectory, Manager, State};
+use tnoodle_rs::Scramble;
+
+mod scramble;
 
 #[tauri::command]
-fn get_scramble(app_handle: tauri::AppHandle) -> String {
-    let app_dir = app_handle
-        .path()
-        .resolve("j4rs", BaseDirectory::Resource)
-        .unwrap();
-
-    // TODO: fallback to `None` when not bundled
-    // TODO: set up ci to download artifacts from maven before bundle step. running cargo test
-    // --release might be sufficient
-    let jvm = jvm::get_jvm(Some(&app_dir)).unwrap();
-    let puzzle = Puzzle::new(jvm, PuzzleType::Three).unwrap();
-    puzzle.generate_wca_scramble().unwrap()
+fn get_scramble(state: State<'_, Mutex<AppState>>) -> Scramble {
+    let state = state.lock().unwrap();
+    state.scrambler.generate_wca_scramble().unwrap()
 }
 
-#[cfg_attr(mobile, tauri::mobile_entry_point)]
+struct AppState {
+    scrambler: BufferedScrambler,
+}
+
 pub fn run() {
     tauri::Builder::default()
         .setup(|app| {
@@ -37,6 +33,11 @@ pub fn run() {
                 let gtk_window = window.gtk_window()?;
                 gtk_window.set_titlebar(Option::<&gtk::Widget>::None);
             }
+
+            let java_dir = app.path().resolve("j4rs", BaseDirectory::Resource).unwrap();
+            app.manage(Mutex::new(AppState {
+                scrambler: BufferedScrambler::new(java_dir),
+            }));
 
             Ok(())
         })

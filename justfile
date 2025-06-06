@@ -1,4 +1,4 @@
-dev:
+run:
     pnpm run tauri dev
 
 build:
