@@ -2,3 +2,5 @@ target/
 dist/
 lib/
 src-tauri/
+pnpm-lock.yaml
+pnpm-workspace.yaml

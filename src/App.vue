@@ -1,15 +1,12 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { invoke } from "@tauri-apps/api/core";
-
-const scramble = ref("");
-
-async function getScramble() {
-  scramble.value = await invoke("get_scramble");
-}
+import { RouterLink, RouterView } from "vue-router";
 </script>
 
 <template>
-  <button @click="() => getScramble()">Get scramble</button>
-  <p>{{ scramble }}</p>
+  <nav>
+    <RouterLink to="/">Home</RouterLink>
+  </nav>
+  <main>
+    <RouterView />
+  </main>
 </template>
