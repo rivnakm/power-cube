@@ -1,36 +1,41 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { Duration } from "../lib/duration";
+import { Timer } from "../lib/timer";
 
-const time = ref("0:00.000");
-const tostring_format = "mm:ss.ff";
+const time = ref("0:00.00");
+const tostringFormat = "m:ss.ff";
 
-let start_time = null;
-let end_time = null;
-let call_interval = undefined;
+let callInterval = undefined;
 
-function update_time() {
-  const duration = Duration.fromDates(start_time, new Date());
-  time.value = duration.toString(tostring_format);
+const timer = new Timer();
+
+function updateTime() {
+  time.value = timer.current().toString(tostringFormat);
 }
 
-function start_stop() {
-  // Stop
-  if (call_interval !== undefined) {
-    clearInterval(call_interval);
-    call_interval = undefined;
-    end_time = new Date();
-    time.value = Duration.fromDates(start_time, end_time).toString(tostring_format);
+function start() {
+  timer.start();
+  callInterval = setInterval(updateTime, 10);
+}
+
+function stop() {
+  if (callInterval !== undefined) {
+    clearInterval(callInterval);
+    callInterval = undefined;
+
+    time.value = timer.stop().toString(tostringFormat);
     return;
   }
+}
 
-  // Start
-  start_time = new Date();
-  call_interval = setInterval(update_time, 10);
+function reset() {
+  time.value = "0:00.00";
 }
 </script>
 
 <template>
   {{ time }}
-  <button @click="start_stop">start_stop</button>
+  <button @click="start">start</button>
+  <button @click="stop">stop</button>
+  <button @click="reset">reset</button>
 </template>

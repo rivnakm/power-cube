@@ -1,5 +1,5 @@
 import { createMemoryHistory, createRouter } from "vue-router";
-import TimerView from "./routes/TimerView.vue";
+import TimerView from "./pages/TimerView.vue";
 
 const routes = [{ path: "/", component: TimerView }];
 

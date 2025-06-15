@@ -5,13 +5,12 @@ import TimerDisplay from "../components/TimerDisplay.vue";
 
 const scramble = ref("");
 
-async function getScramble() {
+async function newScramble() {
   scramble.value = await invoke("get_scramble");
 }
 </script>
 
 <template>
-  <TimerDisplay />
-  <button @click="() => getScramble()">Get scramble</button>
+  <TimerDisplay @reset="newScramble" />
   <p>{{ scramble }}</p>
 </template>
