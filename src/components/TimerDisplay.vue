@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { Duration } from "../lib/duration";
 
-const time = ref("0:00.00");
-const tostring_format = "%M:%S.%L";
+const time = ref("0:00.000");
+const tostring_format = "mm:ss.ff";
 
 let start_time = null;
 let end_time = null;
 let call_interval = undefined;
 
 function update_time() {
-  const duration = new Duration(start_time, new Date());
+  const duration = Duration.fromDates(start_time, new Date());
   time.value = duration.toString(tostring_format);
 }
 
@@ -19,7 +20,7 @@ function start_stop() {
     clearInterval(call_interval);
     call_interval = undefined;
     end_time = new Date();
-    time.value = new Duration(start_time, end_time).toString(tostring_format);
+    time.value = Duration.fromDates(start_time, end_time).toString(tostring_format);
     return;
   }
 
