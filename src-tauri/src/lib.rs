@@ -4,16 +4,12 @@ use std::sync::Mutex;
 use gtk::prelude::GtkWindowExt;
 
 use scramble::BufferedScrambler;
-use tauri::{path::BaseDirectory, Manager, State};
-use tnoodle_rs::Scramble;
+use tauri::{path::BaseDirectory, Manager};
 
+mod db;
+mod handlers;
+mod models;
 mod scramble;
-
-#[tauri::command]
-fn get_scramble(state: State<'_, Mutex<AppState>>) -> Scramble {
-    let state = state.lock().unwrap();
-    state.scrambler.generate_wca_scramble().unwrap()
-}
 
 struct AppState {
     scrambler: BufferedScrambler,
@@ -42,7 +38,10 @@ pub fn run() {
             Ok(())
         })
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![get_scramble])
+        .invoke_handler(tauri::generate_handler![
+            handlers::get_scramble,
+            handlers::record_solve
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

@@ -5,8 +5,6 @@ description = "A Tauri App"
 authors = ["you"]
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [lib]
 # The `_lib` suffix may seem redundant but it is necessary
 # to make the lib name unique and wouldn't conflict with the bin name.
@@ -18,12 +16,16 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = { version = "2", features = [] }
 
 [dependencies]
+tokio = { version = "1", features = ["full"] }
 tauri = { version = "2", features = [] }
 tauri-plugin-opener = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tnoodle-rs = { version = "0.1.0", path = "../lib/tnoodle-rs" }
 crossbeam = { version = "0.8.4", features = ["crossbeam-channel"] }
+sqlx = { version = "0.8.6", features = ["runtime-tokio", "tls-rustls", "sqlite"], default-features = false }
+serde_with = { version = "3.13.0", features = ["chrono"] }
+chrono = { version = "0.4.41", features = ["serde"] }
 
 [target.'cfg(target_os = "linux")'.dependencies]
 gtk = "0.18.2"

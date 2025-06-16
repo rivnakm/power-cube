@@ -2,10 +2,12 @@
 import { ref } from "vue";
 import { Timer } from "../lib/timer";
 
+const emit = defineEmits(["reset"]);
+
 const time = ref("0:00.00");
 const tostringFormat = "m:ss.ff";
 
-let callInterval = undefined;
+let callInterval: number | undefined = undefined;
 
 const timer = new Timer();
 
@@ -30,6 +32,7 @@ function stop() {
 
 function reset() {
   time.value = "0:00.00";
+  emit("reset");
 }
 </script>
 
