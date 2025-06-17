@@ -4,7 +4,7 @@ import { RouterLink, RouterView } from "vue-router";
 
 <template>
   <div class="h-screen w-screen bg-zinc-900 text-zinc-200">
-    <div class="flex h-full w-full flex-col">
+    <div class="grid h-full w-full grid-rows-[3rem_1fr]">
       <nav class="relative flex shrink-0 justify-center border-b border-zinc-800 text-zinc-500">
         <RouterLink
           class="m-1.5 flex flex-initial cursor-default items-center justify-center rounded-xl px-4 py-1.5 select-none hover:bg-zinc-800 hover:text-zinc-200"
@@ -14,7 +14,7 @@ import { RouterLink, RouterView } from "vue-router";
           <i class="fa-solid fa-stopwatch pr-2 text-lg"></i> Timer
         </RouterLink>
       </nav>
-      <div class="h-full w-full">
+      <div class="min-h-0 w-full">
         <RouterView />
       </div>
     </div>

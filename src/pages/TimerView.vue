@@ -27,23 +27,18 @@ onBeforeMount(async () => {
 
 <template>
   <div class="flex h-full flex-row">
-    <div class=" flex flex-col gap-4 h-full min-w-1/6 flex-none border-r border-zinc-800 p-3">
-      <div>
-        <h2 class="font-bold">Stats</h2>
-        <div class="grid grid-cols-2">
-          <span>PB</span>
-          <span>{{ pb.toString("m:ss.ff") }}</span>
-          <span>Ao5 PB</span>
-          <span>{{ ao5Pb.toString("m:ss.ff") }}</span>
-          <span>Ao5</span>
-          <span>{{ ao5.toString("m:ss.ff") }}</span>
-        </div>
+    <div class="flex min-w-1/5 flex-none flex-col gap-4 border-r border-zinc-800 p-3">
+      <h2 class="font-bold">Stats</h2>
+      <div class="grid grid-cols-2 gap-x-3">
+        <span class="text-right">PB</span>
+        <span>{{ pb.toString("m:ss.ff") }}</span>
+        <span class="text-right">Ao5 PB</span>
+        <span>{{ ao5Pb.toString("m:ss.ff") }}</span>
+        <span class="text-right">Ao5</span>
+        <span>{{ ao5.toString("m:ss.ff") }}</span>
       </div>
-      <div>
-        <h2 class="font-bold">Solves ({{ solves.length }})</h2>
-
-        <SolvesList :solves @valuechanged="refreshInfo" />
-      </div>
+      <h2 class="font-bold">Solves ({{ solves.length }})</h2>
+      <SolvesList :solves @valuechanged="refreshInfo" />
     </div>
     <div class="grow p-12 text-center font-mono">
       <TimerDisplay @reset="refreshInfo" @stop="refreshInfo" />

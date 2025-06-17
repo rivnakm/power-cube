@@ -15,15 +15,17 @@ async function execDeleteSolve(id: number) {
 </script>
 
 <template>
-  <table>
-    <tr v-for="solve in solves" :key="solve.id" class="h-10">
-      <td class="p-1 px-2 align-middle text-lg font-bold">{{ solve.solveTime.toString("m:ss.ff") }}</td>
-      <td class="p-1 px-2 align-middle text-sm font-bold text-zinc-600">{{ solve.timestamp.toLocaleDateString() }}</td>
-      <td class="p-1 align-middle">
+  <div class="shrink overflow-auto">
+    <div v-for="solve in solves" :key="solve.id" class="flex flex-row">
+      <div class="flex grow flex-col">
+        <div class="p-1 px-2 align-middle text-lg font-bold">{{ solve.solveTime.toString("m:ss.ff") }}</div>
+        <div class="p-1 px-2 align-middle text-sm font-bold text-zinc-600">{{ solve.timestamp.toLocaleString() }}</div>
+      </div>
+      <div class="p-1 align-middle">
         <button @click="execDeleteSolve(solve.id)">
           <i class="fa-solid fa-xmark text-zinc-600 hover:text-red-400"></i>
         </button>
-      </td>
-    </tr>
-  </table>
+      </div>
+    </div>
+  </div>
 </template>

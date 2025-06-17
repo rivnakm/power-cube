@@ -62,11 +62,9 @@ export class Duration {
   compareTo(other: Duration): number {
     if (other._totalMilliseconds > this._totalMilliseconds) {
       return -1;
-    }
-    else if (other._totalMilliseconds < this._totalMilliseconds) {
+    } else if (other._totalMilliseconds < this._totalMilliseconds) {
       return 1;
-    }
-    else {
+    } else {
       return 0;
     }
   }
