@@ -59,6 +59,18 @@ export class Duration {
     }
   }
 
+  compareTo(other: Duration): number {
+    if (other._totalMilliseconds > this._totalMilliseconds) {
+      return -1;
+    }
+    else if (other._totalMilliseconds < this._totalMilliseconds) {
+      return 1;
+    }
+    else {
+      return 0;
+    }
+  }
+
   private _toStringConstantFormat(): string {
     let str = `${this.hours.toString().padStart(2, "0")}:${this.minutes.toString().padStart(2, "0")}:${this.seconds.toString().padStart(2, "0")}`;
 

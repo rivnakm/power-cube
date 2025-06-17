@@ -3,7 +3,7 @@ name = "power-cube"
 version = "0.1.0"
 description = "A Tauri App"
 authors = ["you"]
-edition = "2021"
+edition = "2024"
 
 [lib]
 # The `_lib` suffix may seem redundant but it is necessary
@@ -23,7 +23,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tnoodle-rs = { version = "0.1.0", path = "../lib/tnoodle-rs" }
 crossbeam = { version = "0.8.4", features = ["crossbeam-channel"] }
-sqlx = { version = "0.8.6", features = ["runtime-tokio", "tls-rustls", "sqlite"], default-features = false }
+sqlx = { version = "0.8.6", features = ["runtime-tokio", "sqlite"], default-features = false }
 serde_with = { version = "3.13.0", features = ["chrono"] }
 chrono = { version = "0.4.41", features = ["serde"] }
 

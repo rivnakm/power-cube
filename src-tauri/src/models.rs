@@ -1,14 +1,17 @@
 use chrono::{DateTime, TimeDelta, Utc};
 use serde::{Deserialize, Serialize};
-use serde_with::{serde_as, DurationMilliSeconds, TimestampSeconds};
+use serde_with::{DurationMilliSeconds, TimestampSeconds, serde_as};
 
 pub trait Model {}
 
 #[serde_as]
 #[cfg_attr(test, derive(PartialEq))]
 #[derive(Clone, Debug, Deserialize, Serialize)]
-#[serde(rename = "camelCase")]
+#[serde(rename_all = "camelCase")]
 pub struct Solve {
+    #[serde(default)]
+    pub id: i64,
+
     #[serde_as(as = "DurationMilliSeconds<i64>")]
     pub solve_time: TimeDelta,
 

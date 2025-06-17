@@ -1,10 +1,10 @@
-use std::sync::Mutex;
-
 #[cfg(target_os = "linux")]
 use gtk::prelude::GtkWindowExt;
 
 use scramble::BufferedScrambler;
-use tauri::{path::BaseDirectory, Manager};
+use sqlx::{SqlitePool, sqlite::SqlitePoolOptions};
+use tauri::{Manager, path::BaseDirectory};
+use tokio::sync::Mutex;
 
 mod db;
 mod handlers;
@@ -13,9 +13,10 @@ mod scramble;
 
 struct AppState {
     scrambler: BufferedScrambler,
+    db_pool: SqlitePool,
 }
 
-pub fn run() {
+pub async fn run() {
     tauri::Builder::default()
         .setup(|app| {
             // Workaround for this issue
@@ -31,8 +32,18 @@ pub fn run() {
             }
 
             let java_dir = app.path().resolve("j4rs", BaseDirectory::Resource).unwrap();
+            let db_path = app
+                .path()
+                .resolve("power-cube/db.sqlite", BaseDirectory::LocalData)
+                .unwrap();
+
+            eprintln!("{:?}", db_path);
+
             app.manage(Mutex::new(AppState {
                 scrambler: BufferedScrambler::new(java_dir),
+                db_pool: SqlitePoolOptions::new()
+                    .connect_lazy(&db_path.to_string_lossy())
+                    .expect("unable to create connection pool"),
             }));
 
             Ok(())
@@ -40,7 +51,12 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             handlers::get_scramble,
-            handlers::record_solve
+            handlers::record_solve,
+            handlers::get_all_solves,
+            handlers::delete_solve,
+            handlers::get_avg_of_n,
+            handlers::get_best_time,
+            handlers::get_best_avg_of_n
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

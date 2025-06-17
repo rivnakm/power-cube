@@ -2,9 +2,8 @@ use std::{path::PathBuf, thread};
 
 use crossbeam::channel::{Receiver, RecvError};
 use tnoodle_rs::{
-    jvm,
+    Scramble, jvm,
     puzzle::{Puzzle, PuzzleType},
-    Scramble,
 };
 
 pub struct BufferedScrambler {
