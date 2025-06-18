@@ -41,10 +41,9 @@ fn main() {
         result.insert(file_name, checksum);
     }
 
-    if let Err(err) = std::fs::write(
-        Path::new(MIGRATIONS_CHECKSUMS_FILE_PATH),
-        serde_json::to_string(&result).unwrap(),
-    ) {
+    let checksums_file = Path::new(MIGRATIONS_CHECKSUMS_FILE_PATH);
+    std::fs::create_dir_all(checksums_file.parent().unwrap()).unwrap();
+    if let Err(err) = std::fs::write(checksums_file, serde_json::to_string(&result).unwrap()) {
         println!("cargo::error=Failed to write migrations checksums to file");
         println!("cargo::error={err}");
         return;
