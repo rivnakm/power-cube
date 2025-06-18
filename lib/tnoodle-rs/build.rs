@@ -21,6 +21,7 @@ struct MavenArtifact {
     group: String,
     id: String,
     version: String,
+    qualifier: String,
 }
 
 fn main() {
@@ -30,7 +31,7 @@ fn main() {
     println!("cargo::rerun-if-changed={MAVEN_DEPS_FILE_PATH}");
 
     let deps_file = PathBuf::from_str(MAVEN_DEPS_FILE_PATH).unwrap();
-    let deps = match read_dependency_list(&deps_file) {
+    let mut deps = match read_dependency_list(&deps_file) {
         Ok(deps) => deps,
         Err(err) => {
             println!("cargo::error=Failed to read dependencies file");
@@ -39,8 +40,20 @@ fn main() {
         }
     };
 
+    // j4rs core library
+    deps.push(MavenArtifact {
+        group: "io.github.astonbitecode".into(),
+        id: "j4rs".into(),
+        version: "0.22.0".into(),
+        qualifier: "-jar-with-dependencies".into(),
+    });
+
+    // Library dependencies
     for artifact in deps {
-        let jar_filename = format!("{}-{}.jar", artifact.id, artifact.version);
+        let jar_filename = format!(
+            "{}-{}{}.jar",
+            artifact.id, artifact.version, artifact.qualifier
+        );
         let checksum_filename = jar_filename.clone() + ".sha1";
         let jar_path = jassets_dir.join(jar_filename.clone());
 
@@ -98,6 +111,7 @@ fn read_dependency_list(deps_file: &Path) -> Result<Vec<MavenArtifact>, Box<dyn 
                 group: parts[0].to_owned(),
                 id: parts[1].to_owned(),
                 version: parts[2].to_owned(),
+                qualifier: "".to_owned(),
             }
         })
         .collect())
