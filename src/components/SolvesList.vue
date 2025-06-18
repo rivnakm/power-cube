@@ -21,9 +21,9 @@ async function execDeleteSolve(id: number) {
         <div class="p-1 px-2 align-middle text-lg font-bold">{{ solve.solveTime.toString("m:ss.ff") }}</div>
         <div class="p-1 px-2 align-middle text-sm font-bold text-zinc-600">{{ solve.timestamp.toLocaleString() }}</div>
       </div>
-      <div class="p-1 align-middle">
-        <button @click="execDeleteSolve(solve.id)">
-          <i class="fa-solid fa-xmark text-zinc-600 hover:text-red-400"></i>
+      <div class="align-middle">
+        <button class="p-2 text-zinc-600 hover:text-red-400" @click="execDeleteSolve(solve.id)">
+          <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
     </div>

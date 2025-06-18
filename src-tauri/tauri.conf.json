@@ -32,7 +32,8 @@
       "icons/icon.ico"
     ],
     "resources": {
-      "target/release/jassets/": "j4rs/jassets/"
+      "target/release/jassets/": "j4rs/jassets/",
+      "migrations/": "migrations/"
     }
   }
 }

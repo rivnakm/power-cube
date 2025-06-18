@@ -13,19 +13,29 @@ name = "power_cube_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
-tauri-build = { version = "2", features = [] }
-
-[dependencies]
-tokio = { version = "1", features = ["full"] }
-tauri = { version = "2", features = [] }
-tauri-plugin-opener = "2"
+hex = "0.4.3"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-tnoodle-rs = { version = "0.1.0", path = "../lib/tnoodle-rs" }
-crossbeam = { version = "0.8.4", features = ["crossbeam-channel"] }
-sqlx = { version = "0.8.6", features = ["runtime-tokio", "sqlite"], default-features = false }
-serde_with = { version = "3.13.0", features = ["chrono"] }
+sha2 = "0.10.9"
+tauri-build = { version = "2", features = [] }
+walkdir = "2.5.0"
+
+[dependencies]
+anyhow = "1.0.98"
 chrono = { version = "0.4.41", features = ["serde"] }
+crossbeam = { version = "0.8.4", features = ["crossbeam-channel"] }
+hex = "0.4.3"
+lazy_static = "1.5.0"
+sha2 = "0.10.9"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_with = { version = "3.13.0", features = ["chrono"] }
+sqlx = { version = "0.8.6", features = ["runtime-tokio", "sqlite"], default-features = false }
+tauri = { version = "2", features = [] }
+tauri-plugin-opener = "2"
+tokio = { version = "1", features = ["full"] }
+tnoodle-rs = { version = "0.1.0", path = "../lib/tnoodle-rs" }
+walkdir = "2.5.0"
 
 [target.'cfg(target_os = "linux")'.dependencies]
 gtk = "0.18.2"

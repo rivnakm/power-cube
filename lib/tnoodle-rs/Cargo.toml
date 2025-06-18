@@ -3,6 +3,12 @@ name = "tnoodle-rs"
 version = "0.1.0"
 edition = "2024"
 
+[build-dependencies]
+reqwest = { version =  "0.12.20", features = ["blocking"] }
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.140"
+sha1_smol = { version = "1.0.1", features = ["std"]}
+
 [dependencies]
 j4rs = "0.22.0"
 lazy_static = "1.5.0"

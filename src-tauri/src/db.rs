@@ -2,6 +2,7 @@ use sqlx::{Result, SqliteExecutor};
 
 use crate::models::Model;
 
+pub mod migrations;
 pub mod solves;
 
 pub trait Repository<TItem>

@@ -1,10 +1,5 @@
-app_db_file := data_local_directory() / 'power-cube/db.sqlite'
-
 run:
     pnpm run tauri dev
-
-run-migrations:
-    bash apply_migrations.sh {{ app_db_file }}
 
 build:
     # There's a linuxdeploy bug that causes Appimage bundling to fail
