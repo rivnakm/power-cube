@@ -26,8 +26,8 @@ clean:
     cargo clean --manifest-path lib/tnoodle-rs/Cargo.toml
     cargo clean --manifest-path src-tauri/Cargo.toml
 
-test:
+test *CARGO_TEST_FLAGS:
     pnpm run test
-    cargo test --manifest-path lib/tnoodle-rs/Cargo.toml
-    cargo test --manifest-path src-tauri/Cargo.toml
+    cargo test --manifest-path lib/tnoodle-rs/Cargo.toml {{ CARGO_TEST_FLAGS }}
+    cargo test --manifest-path src-tauri/Cargo.toml {{ CARGO_TEST_FLAGS }}
 
