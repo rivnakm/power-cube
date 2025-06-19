@@ -17,7 +17,7 @@ jobs:
       contents: write
     outputs:
       semVer: ${{ steps.git-version.outputs.semVer }}
-      majorMinorPatch: ${{ steps.git-version.outputs.majorMinorPatch }}
+      assemblySemVer: ${{ steps.git-version.outputs.assemblySemVer }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -43,9 +43,12 @@ jobs:
     needs: version
     strategy:
       matrix:
-        os: ["ubuntu-latest", "macos-latest", "windows-2025"]
+        os: 
+          - {"name": "ubuntu", "runner": "ubuntu-latest"}
+          - {"name": "macos", "runner": "macos-latest"}
+          - {"name": "windows", "runner": "windows-2025"}
       fail-fast: false
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os.runner }}
     permissions:
       contents: read
     steps:
@@ -55,7 +58,7 @@ jobs:
           fetch-depth: 1
 
       - name: Install system dependencies [Ubuntu]
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os.name == 'ubuntu'
         run: |
           sudo apt update && \
           sudo apt install -y \
@@ -83,12 +86,13 @@ jobs:
         run: |
           just test --release
 
-        # Using a truncated version because Wix doesn't support semver 2.0 :(
       - name: Set release version
         shell: bash
         run: |
-          APP_VERSION=${{ needs.version.outputs.majorMinorPatch }}
-          jq --arg version "${APP_VERSION}" '.version = $version' src-tauri/tauri.conf.json > src-tauri/tauri.conf.json.new
+          APP_VERSION="${{ needs.version.outputs.semVer }}"
+          WIX_APP_VERSION="${{ needs.version.outputs.assemblySemVer }}"
+          # Wix doesn't support semver so it gets a windows System.Version
+          jq --arg version "${APP_VERSION}" --arg wix_version "${WIX_APP_VERSION}" '.version = $version | .bundle.windows.wix.version = $wix_version' src-tauri/tauri.conf.json > src-tauri/tauri.conf.json.new
           mv src-tauri/tauri.conf.json{.new,}
 
       - name: Build release bundle
@@ -96,38 +100,56 @@ jobs:
           just build
 
       - name: Copy release bundles to common directory
+        shell: bash
         run: |
           mkdir release
-          cp ./src-tauri/target/release/bundle/**/power-cube_* release/
-
-      - name: Rename release files
-        shell: pwsh
-        run: |
-          Get-ChildItem release | Rename-Item -NewName {$_.name -replace "${{ needs.version.outputs.majorMinorPatch }}","${{ needs.version.outputs.semVer }}"}
+          if [ ${{ matrix.os.name }} = 'ubuntu' ]; then
+            cp ./src-tauri/target/release/bundle/**/power-cube*.{deb,rpm,AppImage} release/
+          elif [ ${{ matrix.os.name }} = 'macos' ]; then
+            cp ./src-tauri/target/release/bundle/**/power-cube*.dmg release/
+          else
+            cp ./src-tauri/target/release/bundle/**/power-cube*.{exe,msi} release/
+          fi
 
       - name: Upload release artifacts
         uses: actions/upload-artifact@v4
         with:
+          name: artifact-${{ matrix.os.name }}
           path: |
             release/*
 
   publish:
     needs: [version, build]
-    if: github.event_name != 'pull_request'
+    # if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - name: Download release artifacts
+      - name: Download Linux release artifacts
         uses: actions/download-artifact@v4
-
-      - name: Create release
-        uses: softprops/action-gh-release@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          name: Release v${{ needs.version.outputs.majorMinorPatch }}
-          tag_name: v${{ needs.version.outputs.majorMinorPatch }}
-          prerelease: ${{ github.ref_name != 'main' }}
-          files: |
-            ./power-cube_*
+          name: artifact-ubuntu
+
+      - name: Download macOS release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: artifact-macos
+
+      - name: Download Windows release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: artifact-windows
+
+      - shell: bash
+        run: ls -R
+
+      # - name: Create release
+      #   uses: softprops/action-gh-release@v2
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     name: Release v${{ needs.version.outputs.semVer }}
+      #     tag_name: v${{ needs.version.outputs.semVer }}
+      #     prerelease: ${{ github.ref_name != 'main' }}
+      #     files: |
+      #       ./power-cube_*
 
