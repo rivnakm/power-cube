@@ -88,7 +88,8 @@ jobs:
         shell: bash
         run: |
           APP_VERSION=${{ needs.version.outputs.majorMinorPatch }}
-          jq --arg version "${APP_VERSION}" '.version = $version' src-tauri/tauri.conf.json > src-tauri/tauri.conf.json
+          jq --arg version "${APP_VERSION}" '.version = $version' src-tauri/tauri.conf.json > src-tauri/tauri.conf.json.new
+          mv src-tauri/tauri.conf.json{.new,}
 
       - name: Build release bundle
         run: |
