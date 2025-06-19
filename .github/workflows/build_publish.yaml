@@ -120,7 +120,7 @@ jobs:
 
   publish:
     needs: [version, build]
-    # if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -140,16 +140,13 @@ jobs:
         with:
           name: artifact-windows
 
-      - shell: bash
-        run: ls -R
-
-      # - name: Create release
-      #   uses: softprops/action-gh-release@v2
-      #   with:
-      #     token: ${{ secrets.GITHUB_TOKEN }}
-      #     name: Release v${{ needs.version.outputs.semVer }}
-      #     tag_name: v${{ needs.version.outputs.semVer }}
-      #     prerelease: ${{ github.ref_name != 'main' }}
-      #     files: |
-      #       ./power-cube_*
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Release v${{ needs.version.outputs.semVer }}
+          tag_name: v${{ needs.version.outputs.semVer }}
+          prerelease: ${{ github.ref_name != 'main' }}
+          files: |
+            ./power-cube_*
 
