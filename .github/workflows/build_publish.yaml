@@ -1,0 +1,152 @@
+name: Build and Publish
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      semVer: ${{ steps.git-version.outputs.semVer }}
+      assemblySemVer: ${{ steps.git-version.outputs.assemblySemVer }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v3.2.1
+        with:
+          versionSpec: '6.3.x'
+
+      - name: Run GitVersion
+        id: git-version
+        uses: gittools/actions/gitversion/execute@v3.2.1
+
+      - name: Tag release
+        if: github.event_name != 'pull_request'
+        run: |
+          git tag v${{ steps.git-version.outputs.semVer }}
+          git push --tags
+
+  build:
+    needs: version
+    strategy:
+      matrix:
+        os: 
+          - {"name": "ubuntu", "runner": "ubuntu-latest"}
+          - {"name": "macos", "runner": "macos-latest"}
+          - {"name": "windows", "runner": "windows-2025"}
+      fail-fast: false
+    runs-on: ${{ matrix.os.runner }}
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Install system dependencies [Ubuntu]
+        if: matrix.os.name == 'ubuntu'
+        run: |
+          sudo apt update && \
+          sudo apt install -y \
+            libwebkit2gtk-4.1-dev \
+            build-essential \
+            curl \
+            wget \
+            file \
+            libxdo-dev \
+            libssl-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev
+
+      - name: Install just
+        uses: extractions/setup-just@v3
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+          run_install: |
+            - args: [--frozen-lockfile, --strict-peer-dependencies]
+
+      - name: Run Tests
+        run: |
+          just test --release
+
+      - name: Set release version
+        shell: bash
+        run: |
+          APP_VERSION="${{ needs.version.outputs.semVer }}"
+          WIX_APP_VERSION="${{ needs.version.outputs.assemblySemVer }}"
+          # Wix doesn't support semver so it gets a windows System.Version
+          jq --arg version "${APP_VERSION}" --arg wix_version "${WIX_APP_VERSION}" '.version = $version | .bundle.windows.wix.version = $wix_version' src-tauri/tauri.conf.json > src-tauri/tauri.conf.json.new
+          mv src-tauri/tauri.conf.json{.new,}
+
+      - name: Build release bundle
+        run: |
+          just build
+
+      - name: Copy release bundles to common directory
+        shell: bash
+        run: |
+          mkdir release
+          if [ ${{ matrix.os.name }} = 'ubuntu' ]; then
+            cp ./src-tauri/target/release/bundle/**/power-cube*.{deb,rpm,AppImage} release/
+          elif [ ${{ matrix.os.name }} = 'macos' ]; then
+            cp ./src-tauri/target/release/bundle/**/power-cube*.dmg release/
+          else
+            cp ./src-tauri/target/release/bundle/**/power-cube*.{exe,msi} release/
+          fi
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-${{ matrix.os.name }}
+          path: |
+            release/*
+
+  publish:
+    needs: [version, build]
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download Linux release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: artifact-ubuntu
+
+      - name: Download macOS release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: artifact-macos
+
+      - name: Download Windows release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: artifact-windows
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Release v${{ needs.version.outputs.semVer }}
+          tag_name: v${{ needs.version.outputs.semVer }}
+          prerelease: ${{ github.ref_name != 'main' }}
+          files: |
+            ./power-cube_*
+

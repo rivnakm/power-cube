@@ -1,8 +1,10 @@
-dev:
+run:
     pnpm run tauri dev
 
 build:
-    pnpm run tauri build
+    # There's a linuxdeploy bug that causes Appimage bundling to fail
+    # https://github.com/linuxdeploy/linuxdeploy/issues/272
+    ARCH={{ arch() }} NO_STRIP=true pnpm run tauri build
 
 format:
     pnpm exec prettier . --write
@@ -24,7 +26,8 @@ clean:
     cargo clean --manifest-path lib/tnoodle-rs/Cargo.toml
     cargo clean --manifest-path src-tauri/Cargo.toml
 
-test:
-    cargo test --manifest-path lib/tnoodle-rs/Cargo.toml
-    cargo test --manifest-path src-tauri/Cargo.toml
+test *CARGO_TEST_FLAGS:
+    pnpm run test
+    cargo test --manifest-path lib/tnoodle-rs/Cargo.toml {{ CARGO_TEST_FLAGS }}
+    cargo test --manifest-path src-tauri/Cargo.toml {{ CARGO_TEST_FLAGS }}
 
