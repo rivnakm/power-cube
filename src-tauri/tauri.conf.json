@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "power-cube",
+  "productName": "PowerCube",
   "version": "0.1.0",
   "identifier": "org.rivnakm.power-cube",
   "build": {
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "power-cube",
+        "title": "PowerCube",
         "width": 1280,
         "height": 720
       }
