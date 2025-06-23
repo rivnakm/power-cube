@@ -1,13 +1,13 @@
 use sqlx::{Result, SqliteExecutor};
 
-use crate::models::Model;
+use crate::entities::Entity;
 
 pub mod migrations;
 pub mod solves;
 
 pub trait Repository<TItem>
 where
-    TItem: Model,
+    TItem: Entity,
 {
     async fn get_all(&self, connection: impl SqliteExecutor<'_>) -> Result<Vec<TItem>>;
 

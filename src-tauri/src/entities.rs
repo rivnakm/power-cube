@@ -2,7 +2,7 @@ use chrono::{DateTime, TimeDelta, Utc};
 use serde::{Deserialize, Serialize};
 use serde_with::{DurationMilliSeconds, TimestampSeconds, serde_as};
 
-pub trait Model {}
+pub trait Entity {}
 
 #[serde_as]
 #[cfg_attr(test, derive(PartialEq))]
@@ -19,4 +19,4 @@ pub struct Solve {
     pub timestamp: DateTime<Utc>,
 }
 
-impl Model for Solve {}
+impl Entity for Solve {}

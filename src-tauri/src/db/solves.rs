@@ -1,7 +1,7 @@
 use chrono::{DateTime, TimeDelta, Utc};
 use sqlx::{Result, Row, SqliteExecutor};
 
-use crate::models::Solve;
+use crate::entities::Solve;
 
 use super::Repository;
 
@@ -32,7 +32,7 @@ impl SolveRepository {
             .map(|r| r.get::<i64, _>("solve_time"))
             .collect::<Vec<i64>>();
 
-        if times.len() == 0 {
+        if times.is_empty() {
             return Ok(TimeDelta::zero());
         }
         let avg = times.iter().sum::<i64>() / times.len() as i64;

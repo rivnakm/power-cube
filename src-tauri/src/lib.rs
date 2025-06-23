@@ -3,7 +3,7 @@ use std::str::FromStr;
 #[cfg(target_os = "linux")]
 use gtk::prelude::GtkWindowExt;
 
-use scramble::BufferedScrambler;
+use puzzle::scramble::BufferedScrambler;
 use sqlx::{
     ConnectOptions,
     sqlite::{SqliteConnectOptions, SqlitePool, SqlitePoolOptions},
@@ -12,9 +12,9 @@ use tauri::{Manager, path::BaseDirectory};
 use tokio::sync::Mutex;
 
 mod db;
+mod entities;
 mod handlers;
-mod models;
-mod scramble;
+mod puzzle;
 
 struct AppState {
     scrambler: BufferedScrambler,
@@ -78,6 +78,7 @@ pub async fn run() {
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             handlers::get_scramble,
+            handlers::scramble_cube,
             handlers::record_solve,
             handlers::get_all_solves,
             handlers::delete_solve,

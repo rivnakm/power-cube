@@ -6,13 +6,23 @@ use tokio::sync::Mutex;
 use crate::{
     AppState,
     db::{Repository, solves::SolveRepository},
-    models::Solve,
+    entities::Solve,
+    puzzle::{MoveSequence, Puzzle, cube::ThreeCube},
 };
 
 #[tauri::command]
 pub(crate) async fn get_scramble(state: State<'_, Mutex<AppState>>) -> Result<Scramble, ()> {
     let state = state.lock().await;
     Ok(state.scrambler.generate_wca_scramble().unwrap())
+}
+
+#[tauri::command]
+pub(crate) async fn scramble_cube(scramble: String) -> ThreeCube {
+    let mut cube = ThreeCube::default();
+
+    cube.exec_seq(&MoveSequence::from(scramble.as_str()));
+
+    cube
 }
 
 #[tauri::command]

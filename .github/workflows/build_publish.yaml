@@ -27,7 +27,7 @@ jobs:
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v3.2.1
         with:
-          versionSpec: '6.3.x'
+          versionSpec: "6.3.x"
 
       - name: Run GitVersion
         id: git-version
@@ -43,10 +43,10 @@ jobs:
     needs: version
     strategy:
       matrix:
-        os: 
-          - {"name": "ubuntu", "runner": "ubuntu-latest"}
-          - {"name": "macos", "runner": "macos-latest"}
-          - {"name": "windows", "runner": "windows-2025"}
+        os:
+          - { "name": "ubuntu", "runner": "ubuntu-latest" }
+          - { "name": "macos", "runner": "macos-latest" }
+          - { "name": "windows", "runner": "windows-2025" }
       fail-fast: false
     runs-on: ${{ matrix.os.runner }}
     permissions:
@@ -149,4 +149,3 @@ jobs:
           prerelease: ${{ github.ref_name != 'main' }}
           files: |
             ./power-cube_*
-
