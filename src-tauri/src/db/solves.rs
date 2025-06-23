@@ -80,7 +80,7 @@ impl SolveRepository {
             .into_iter()
             .map(|r| r.get::<i64, _>("solve_time"))
             .collect::<Vec<i64>>();
-        if times.len() == 0 {
+        if times.is_empty() {
             return Ok(TimeDelta::zero());
         }
         let avg = times.iter().sum::<i64>() / times.len() as i64;

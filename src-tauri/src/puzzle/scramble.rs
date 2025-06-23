@@ -5,6 +5,7 @@ use tnoodle_rs::{
     Scramble, jvm,
     puzzle::{Puzzle, PuzzleType},
 };
+
 pub struct BufferedScrambler {
     receiver: Receiver<Scramble>,
 }

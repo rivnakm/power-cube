@@ -14,9 +14,9 @@ where
         Self: std::marker::Sized;
 }
 
-pub trait PuzzleMove<TPuzzle>
+pub trait PuzzleMove<P>
 where
-    TPuzzle: Puzzle + ?Sized,
+    P: Puzzle + ?Sized,
 {
 }
 
