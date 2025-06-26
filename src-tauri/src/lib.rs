@@ -78,7 +78,6 @@ pub async fn run() {
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             handlers::get_scramble,
-            handlers::scramble_cube,
             handlers::record_solve,
             handlers::get_all_solves,
             handlers::delete_solve,

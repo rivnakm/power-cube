@@ -7,22 +7,15 @@ use crate::{
     AppState,
     db::{Repository, solves::SolveRepository},
     entities::Solve,
-    puzzle::{MoveSequence, Puzzle, cube::ThreeCube},
+    puzzle::cube::ThreeCube,
 };
 
 #[tauri::command]
-pub(crate) async fn get_scramble(state: State<'_, Mutex<AppState>>) -> Result<Scramble, ()> {
+pub(crate) async fn get_scramble(
+    state: State<'_, Mutex<AppState>>,
+) -> Result<(Scramble, ThreeCube), ()> {
     let state = state.lock().await;
     Ok(state.scrambler.generate_wca_scramble().unwrap())
-}
-
-#[tauri::command]
-pub(crate) async fn scramble_cube(scramble: String) -> ThreeCube {
-    let mut cube = ThreeCube::default();
-
-    cube.exec_seq(&MoveSequence::from(scramble.as_str()));
-
-    cube
 }
 
 #[tauri::command]

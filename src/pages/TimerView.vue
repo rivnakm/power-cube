@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onBeforeMount, type Ref, ref } from "vue";
-import { getAllSolves, getAvgOfN, getBestAvgOfN, getBestTime, getScramble, scrambleCube } from "../lib/invoke_wrapper";
+import { getAllSolves, getAvgOfN, getBestAvgOfN, getBestTime, getScramble } from "../lib/invoke_wrapper";
 import { Duration } from "../lib/duration";
 import { Solve } from "../lib/models";
 import FullCubeDisplay from "../components/FullCubeDisplay.vue";
@@ -17,8 +17,7 @@ const pb = ref(new Duration());
 
 async function refreshInfo() {
   solves.value = (await getAllSolves()).sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
-  scramble.value = await getScramble();
-  cube.value = await scrambleCube(scramble.value);
+  [scramble.value, cube.value] = await getScramble();
   ao5.value = await getAvgOfN(5);
   ao5Pb.value = await getBestAvgOfN(5);
   pb.value = await getBestTime();

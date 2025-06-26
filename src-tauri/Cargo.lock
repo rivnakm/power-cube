@@ -3032,6 +3032,7 @@ dependencies = [
  "lazy_static",
  "serde",
  "serde_json",
+ "serde_repr",
  "serde_with",
  "sha2",
  "sqlx",

@@ -2,12 +2,8 @@ import { invoke } from "@tauri-apps/api/core";
 import { Cube, Solve } from "./models";
 import { Duration } from "./duration";
 
-export async function getScramble(): Promise<string> {
-  return (await invoke("get_scramble")) as string;
-}
-
-export async function scrambleCube(scramble: string): Promise<Cube> {
-  return (await invoke("scramble_cube", { scramble: scramble })) as Cube;
+export async function getScramble(): Promise<[string, Cube]> {
+  return (await invoke("get_scramble")) as [string, Cube];
 }
 
 export async function recordSolve(solve: Solve): Promise<number> {
