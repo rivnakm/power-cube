@@ -6,7 +6,6 @@ defineProps<{
 }>();
 
 function faceColorToClass(faceColor: FaceColor): string {
-  console.log("got face color: ", faceColor);
   switch (faceColor) {
     case FaceColor.Blue:
       return "bg-blue-500";
