@@ -2,6 +2,10 @@ import { invoke } from "@tauri-apps/api/core";
 import { Cube, Solve } from "./models";
 import { Duration } from "./duration";
 
+export async function checkJava(): Promise<string | null> {
+  return (await invoke("check_java")) as string;
+}
+
 export async function getScramble(): Promise<[string, Cube]> {
   return (await invoke("get_scramble")) as [string, Cube];
 }

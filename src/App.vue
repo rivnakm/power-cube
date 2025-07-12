@@ -1,5 +1,21 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from "vue-router";
+import { onBeforeMount } from "vue";
+import { RouterLink, RouterView, useRouter } from "vue-router";
+import { checkJava } from "./lib/invoke_wrapper";
+import { useErrorStore } from "./stores/error";
+
+const router = useRouter();
+const errorStore = useErrorStore();
+
+onBeforeMount(async () => {
+  const err = await checkJava();
+  if (err !== null) {
+    errorStore.message = "Java installation check failed!";
+    errorStore.helpMessage = "Ensure Java 11+ is installed and available in PATH";
+    errorStore.description = err;
+    router.replace("/error");
+  }
+});
 </script>
 
 <template>

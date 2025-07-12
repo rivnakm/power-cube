@@ -11,6 +11,12 @@ use crate::{
 };
 
 #[tauri::command]
+pub(crate) async fn check_java(state: State<'_, Mutex<AppState>>) -> Result<Option<String>, ()> {
+    let state = state.lock().await;
+    Ok(state.java_check_error_message.clone())
+}
+
+#[tauri::command]
 pub(crate) async fn get_scramble(
     state: State<'_, Mutex<AppState>>,
 ) -> Result<(Scramble, ThreeCube), ()> {
