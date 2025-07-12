@@ -15,10 +15,12 @@ mod db;
 mod entities;
 mod handlers;
 mod puzzle;
+mod util;
 
 struct AppState {
     scrambler: BufferedScrambler,
     db_pool: SqlitePool,
+    java_check_error_message: Option<String>,
 }
 
 pub async fn run() {
@@ -55,6 +57,7 @@ pub async fn run() {
                 db_pool: SqlitePoolOptions::new()
                     .connect_lazy(&db_path.to_string_lossy())
                     .expect("unable to create connection pool"),
+                java_check_error_message: util::check_java_installed().err(),
             };
 
             // passing the db_pool here is super clunky along with keeping it for the tauri state
@@ -77,6 +80,7 @@ pub async fn run() {
         })
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
+            handlers::check_java,
             handlers::get_scramble,
             handlers::record_solve,
             handlers::get_all_solves,

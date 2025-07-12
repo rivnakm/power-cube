@@ -25,7 +25,9 @@ function faceColorToClass(faceColor: FaceColor): string {
 
 <template>
   <div class="flex flex-row gap-1">
+    <!-- eslint-disable-next-line vue/require-v-for-key -->
     <div class="flex flex-col gap-1" v-for="row in face">
+      <!-- eslint-disable-next-line vue/require-v-for-key -->
       <div v-for="col in row" :class="['rounded', 'size-8', faceColorToClass(col)]"></div>
     </div>
   </div>
